@@ -1,68 +1,76 @@
 package com.bsokolovskyi.bridge.web.service;
 
+import com.bsokolovskyi.bridge.web.db.entity.Role;
 import com.bsokolovskyi.bridge.web.db.entity.User;
+import com.bsokolovskyi.bridge.web.db.repository.RoleRepository;
 import com.bsokolovskyi.bridge.web.db.repository.UserRepository;
 import com.bsokolovskyi.bridge.web.dto.UserDTO;
-import com.bsokolovskyi.bridge.web.exception.IncorrectPasswordException;
-import com.bsokolovskyi.bridge.web.exception.LoginException;
-import com.bsokolovskyi.bridge.web.exception.RegistrationException;
+import com.bsokolovskyi.bridge.web.exception.UserExistException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
+
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserService(@Autowired UserRepository userRepository,
+                       @Autowired RoleRepository roleRepository,
                        @Autowired PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void login(UserDTO userDTO) throws LoginException, IncorrectPasswordException {
-        User user = userRepository.findByLogin(userDTO.getLogin());
-
-        if(user == null) {
-            throw new LoginException(userDTO);
+    public void createNewUser(UserDTO userDTO) throws UserExistException {
+        if(userRepository.findByEmail(userDTO.getEmail()) != null) {
+            throw new UserExistException(userDTO);
         }
 
-        if(!user.getHashPassword().equals(passwordEncoder.encode(userDTO.getPassword()))) {
-            throw new IncorrectPasswordException(userDTO);
-        }
+        User user = new User();
+        user.setEmail(userDTO.getEmail());
+        user.setFirstName(userDTO.getFirstName());
+        user.setLastName(userDTO.getLastName());
+        user.setLogin(userDTO.getLogin());
+        user.setHashPassword(passwordEncoder.encode(userDTO.getPassword()));
 
-        //TODO: set status login
-    }
+        Role userRole = roleRepository.findByRole("USER");
+        user.setRoles(Collections.singleton(userRole));
 
-    public void register(UserDTO userDTO) throws RegistrationException {
-        User user = userRepository.findByLogin(userDTO.getLogin());
-
-        if(user != null) {
-            throw new RegistrationException(userDTO);
-        }
-
-        User newUser = new User();
-
-        newUser.setFirstName(userDTO.getFirstName());
-        newUser.setLastName(userDTO.getLastName());
-        newUser.setEmail(userDTO.getEmail());
-        newUser.setLogin(userDTO.getLogin());
-        newUser.setHashPassword(passwordEncoder.encode(userDTO.getPassword()));
-
-        userRepository.save(newUser);
-    }
-
-    public void logout(User user) {
-        //TODO: implement me
+        userRepository.save(user);
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
+
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("user by email %s not found", email));
+        }
+
+        return buildUserForAuthentication(user, getUserAuthority(user.getRoles()));
+    }
+
+    private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
+        Set<GrantedAuthority> roles = new HashSet<>();
+        userRoles.forEach((role) -> {
+            roles.add(new SimpleGrantedAuthority(role.getRole()));
+        });
+
+        return new ArrayList<>(roles);
+    }
+
+    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
+        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getHashPassword(), authorities);
     }
 }

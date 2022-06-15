@@ -1,20 +1,29 @@
 package com.bsokolovskyi.bridge.web.db.entity;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Document(collation = "user")
 public class User {
     @Id
     private String id;
 
+    @Indexed(unique = true, direction = IndexDirection.DESCENDING)
+    private String email;
+
     private String firstName;
     private String lastName;
-    private String email;
     private String login;
     private String hashPassword;
+
+    @DBRef
+    private Set<Role> roles;
 
     public User() {}
 
@@ -42,6 +51,10 @@ public class User {
         this.hashPassword = hashPassword;
     }
 
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     public String getId() {
         return id;
     }
@@ -66,33 +79,33 @@ public class User {
         return hashPassword;
     }
 
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User)) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) &&
-                Objects.equals(firstName, user.firstName) &&
-                Objects.equals(lastName, user.lastName) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(login, user.login) &&
-                Objects.equals(hashPassword, user.hashPassword);
+        return Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(login, user.login) && Objects.equals(hashPassword, user.hashPassword) && Objects.equals(roles, user.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, login, hashPassword);
+        return Objects.hash(id, email, firstName, lastName, login, hashPassword, roles);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id='" + id + '\'' +
+                ", email='" + email + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
                 ", login='" + login + '\'' +
                 ", hashPassword='" + hashPassword + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }
