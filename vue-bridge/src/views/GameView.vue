@@ -1,10 +1,10 @@
 <template>
-  <p> Dashboard </p>
+  <p> game </p>
 </template>
 
 <script>
 export default {
-  name: "dashboard-view"
+  name: "game-view"
 }
 </script>
 
