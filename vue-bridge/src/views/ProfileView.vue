@@ -1,10 +1,10 @@
 <template>
-
+  <p> profile </p>
 </template>
 
 <script>
 export default {
-  name: "GameView"
+  name: "ProfileView"
 }
 </script>
 

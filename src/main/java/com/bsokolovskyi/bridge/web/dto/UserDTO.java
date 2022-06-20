@@ -22,8 +22,9 @@ public class UserDTO {
         this.email = email;
     }
 
+    //TODO: remove login
     public void setLogin(String login) {
-        this.login = login;
+        this.login = "login";
     }
 
     public void setPassword(String password) {
