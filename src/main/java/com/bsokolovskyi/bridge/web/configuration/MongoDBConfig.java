@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
-@PropertySource("classpath:application.properties")
 public class MongoDBConfig {
 
     @Value("${spring.data.mongodb.host}")
@@ -26,10 +24,9 @@ public class MongoDBConfig {
 
     @Bean
     public MongoClient mongo() {
-        return MongoClients.create(
-                MongoClientSettings.builder()
-                        .applyConnectionString(new ConnectionString(String.format("mongodb://%s:%s/", host, port)))
-                        .build());
+        return MongoClients.create(MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(String.format("mongodb://%s:%s/", host, port)))
+                .build());
     }
 
     @Bean

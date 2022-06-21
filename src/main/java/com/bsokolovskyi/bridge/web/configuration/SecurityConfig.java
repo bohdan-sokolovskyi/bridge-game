@@ -1,6 +1,6 @@
 package com.bsokolovskyi.bridge.web.configuration;
 
-import com.bsokolovskyi.bridge.web.jwt.JwtFilter;
+import com.bsokolovskyi.bridge.web.security.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-
         return httpSecurity
                 .httpBasic().disable()
                 .csrf().disable()
@@ -30,6 +29,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login", "/signup").permitAll()
+                .antMatchers("/users", "/games").hasRole("ADMIN")
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

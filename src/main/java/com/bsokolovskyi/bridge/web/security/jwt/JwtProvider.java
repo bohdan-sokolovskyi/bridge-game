@@ -1,4 +1,4 @@
-package com.bsokolovskyi.bridge.web.jwt;
+package com.bsokolovskyi.bridge.web.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -29,12 +29,11 @@ public class JwtProvider {
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return true;
         } catch (Exception e) {
-            //TODO: log error
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     public String getEmailFromToken(String token) {

@@ -1,4 +1,4 @@
-package com.bsokolovskyi.bridge.web.component;
+package com.bsokolovskyi.bridge.web.security;
 
 import com.bsokolovskyi.bridge.web.db.entity.User;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,7 +22,6 @@ public class CustomUserDetails implements UserDetails {
 
         return c;
     }
-
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

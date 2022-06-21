@@ -1,6 +1,7 @@
 package com.bsokolovskyi.bridge.web.service;
 
-import com.bsokolovskyi.bridge.web.component.CustomUserDetails;
+import com.bsokolovskyi.bridge.web.request.RefreshAccessTokenRequest;
+import com.bsokolovskyi.bridge.web.security.CustomUserDetails;
 import com.bsokolovskyi.bridge.web.db.entity.Role;
 import com.bsokolovskyi.bridge.web.db.entity.User;
 import com.bsokolovskyi.bridge.web.db.repository.RoleRepository;
@@ -8,7 +9,7 @@ import com.bsokolovskyi.bridge.web.db.repository.UserRepository;
 import com.bsokolovskyi.bridge.web.exception.IncorrectPasswordException;
 import com.bsokolovskyi.bridge.web.exception.UserExistException;
 import com.bsokolovskyi.bridge.web.exception.UserNotExistException;
-import com.bsokolovskyi.bridge.web.jwt.JwtProvider;
+import com.bsokolovskyi.bridge.web.security.jwt.JwtProvider;
 import com.bsokolovskyi.bridge.web.request.AuthRequest;
 import com.bsokolovskyi.bridge.web.request.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,18 +39,20 @@ public class UserService implements UserDetailsService {
         this.jwtProvider = jwtProvider;
 
         //pre init data (it is hard core, but for edu)
-        roleRepository.save(new Role("ROLE_USER"));
-        roleRepository.save(new Role("ROLE_ADMIN"));
+        {
+            roleRepository.save(new Role("ROLE_USER"));
+            roleRepository.save(new Role("ROLE_ADMIN"));
 
-        User admin = new User();
+            User admin = new User();
 
-        admin.setFirstName("Big");
-        admin.setLastName("Admin");
-        admin.setEmail("admin@localhost");
-        admin.setHashPassword(passwordEncoder.encode("i_am_very_big_admin"));
-        admin.setRole(Objects.requireNonNull(roleRepository.findByRole("ROLE_ADMIN")));
+            admin.setFirstName("Big");
+            admin.setLastName("Admin");
+            admin.setEmail("admin@localhost");
+            admin.setHashPassword(passwordEncoder.encode("i_am_very_big_admin"));
+            admin.setRole(Objects.requireNonNull(roleRepository.findByRole("ROLE_ADMIN")));
 
-        userRepository.save(admin);
+            userRepository.save(admin);
+        }
     }
 
     public void createNewUser(SignupRequest signupRequest) throws UserExistException {
@@ -82,6 +85,16 @@ public class UserService implements UserDetailsService {
         }
 
         return jwtProvider.generateToken(user.getEmail());
+    }
+
+    public String refreshAccessToken(RefreshAccessTokenRequest refreshAccessTokenRequest) throws UserNotExistException {
+         String email = jwtProvider.getEmailFromToken(refreshAccessTokenRequest.getAccessToken());
+
+         if(userRepository.findByEmail(email) == null) {
+             throw new UserNotExistException(email);
+         }
+
+         return jwtProvider.generateToken(email);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.bsokolovskyi.bridge.web.jwt;
+package com.bsokolovskyi.bridge.web.security.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
