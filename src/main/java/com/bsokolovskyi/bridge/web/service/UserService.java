@@ -1,14 +1,17 @@
 package com.bsokolovskyi.bridge.web.service;
 
+import com.bsokolovskyi.bridge.web.component.CustomUserDetails;
 import com.bsokolovskyi.bridge.web.db.entity.Role;
 import com.bsokolovskyi.bridge.web.db.entity.User;
 import com.bsokolovskyi.bridge.web.db.repository.RoleRepository;
 import com.bsokolovskyi.bridge.web.db.repository.UserRepository;
-import com.bsokolovskyi.bridge.web.dto.UserDTO;
+import com.bsokolovskyi.bridge.web.exception.IncorrectPasswordException;
 import com.bsokolovskyi.bridge.web.exception.UserExistException;
+import com.bsokolovskyi.bridge.web.exception.UserNotExistException;
+import com.bsokolovskyi.bridge.web.jwt.JwtProvider;
+import com.bsokolovskyi.bridge.web.request.AuthRequest;
+import com.bsokolovskyi.bridge.web.request.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,31 +26,62 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
 
     public UserService(@Autowired UserRepository userRepository,
                        @Autowired RoleRepository roleRepository,
-                       @Autowired PasswordEncoder passwordEncoder) {
+                       @Autowired PasswordEncoder passwordEncoder,
+                       @Autowired JwtProvider jwtProvider) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtProvider = jwtProvider;
+
+        //pre init data (it is hard core, but for edu)
+        roleRepository.save(new Role("ROLE_USER"));
+        roleRepository.save(new Role("ROLE_ADMIN"));
+
+        User admin = new User();
+
+        admin.setFirstName("Big");
+        admin.setLastName("Admin");
+        admin.setEmail("admin@localhost");
+        admin.setHashPassword(passwordEncoder.encode("i_am_very_big_admin"));
+        admin.setRole(Objects.requireNonNull(roleRepository.findByRole("ROLE_ADMIN")));
+
+        userRepository.save(admin);
     }
 
-    public void createNewUser(UserDTO userDTO) throws UserExistException {
-        if(userRepository.findByEmail(userDTO.getEmail()) != null) {
-            throw new UserExistException(userDTO);
+    public void createNewUser(SignupRequest signupRequest) throws UserExistException {
+        if(userRepository.findByEmail(signupRequest.getEmail()) != null) {
+            throw new UserExistException(signupRequest.getEmail());
         }
 
         User user = new User();
-        user.setEmail(userDTO.getEmail());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setLogin(userDTO.getLogin());
-        user.setHashPassword(passwordEncoder.encode(userDTO.getPassword()));
+        user.setEmail(signupRequest.getEmail());
+        user.setFirstName(signupRequest.getFirstName());
+        user.setLastName(signupRequest.getLastName());
+        user.setHashPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
-        Role userRole = roleRepository.findByRole("USER");
-        user.setRoles(Collections.singleton(userRole));
+        Role userRole = Objects.requireNonNull(roleRepository.findByRole("USER"));
+
+        user.setRole(userRole);
 
         userRepository.save(user);
+    }
+
+    public String loginUser(AuthRequest authRequest) throws UserNotExistException {
+        User user = userRepository.findByEmail(authRequest.getEmail());
+
+        if(user == null) {
+            throw new UserNotExistException(authRequest.getEmail());
+        }
+
+        if(!passwordEncoder.matches(authRequest.getPassword(), user.getHashPassword())) {
+            throw new IncorrectPasswordException(authRequest.getEmail());
+        }
+
+        return jwtProvider.generateToken(user.getEmail());
     }
 
     @Override
@@ -58,19 +92,6 @@ public class UserService implements UserDetailsService {
             throw new UsernameNotFoundException(String.format("user by email %s not found", email));
         }
 
-        return buildUserForAuthentication(user, getUserAuthority(user.getRoles()));
-    }
-
-    private List<GrantedAuthority> getUserAuthority(Set<Role> userRoles) {
-        Set<GrantedAuthority> roles = new HashSet<>();
-        userRoles.forEach((role) -> {
-            roles.add(new SimpleGrantedAuthority(role.getRole()));
-        });
-
-        return new ArrayList<>(roles);
-    }
-
-    private UserDetails buildUserForAuthentication(User user, List<GrantedAuthority> authorities) {
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getHashPassword(), authorities);
+        return CustomUserDetails.fromUserEntityToCustomUserDetails(user);
     }
 }

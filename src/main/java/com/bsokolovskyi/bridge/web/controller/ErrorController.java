@@ -1,4 +1,4 @@
-package com.bsokolovskyi.bridge.web.controllers;
+package com.bsokolovskyi.bridge.web.controller;
 
 import org.springframework.stereotype.Controller;
 

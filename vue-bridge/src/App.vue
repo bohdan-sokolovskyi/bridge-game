@@ -3,9 +3,11 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
     <router-link to="/dashboard">Dashboard</router-link>
+  </nav>
 
-
+  <nav>
     <router-link to="/login" id="login-router-link">LOGIN</router-link>
+    <router-link to="/signup" id="signup-router-link">SIGNUP</router-link>
   </nav>
   <router-view/>
 </template>
@@ -39,5 +41,9 @@ nav a.router-link-exact-active {
 
 nav #login-router-link {
   padding: 30px;
+}
+
+nav #signup-router-link {
+  padding:30px;
 }
 </style>

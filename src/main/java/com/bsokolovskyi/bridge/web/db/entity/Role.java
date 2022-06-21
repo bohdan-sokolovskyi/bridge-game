@@ -7,8 +7,14 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Objects;
 
-@Document(collation = "role")
+@Document(collection = "role_tb")
 public class Role {
+
+    public Role() {}
+
+    public Role(String role) {
+        this.role = role;
+    }
 
     @Id
     private String id;

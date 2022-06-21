@@ -3,7 +3,7 @@ package com.bsokolovskyi.bridge.web.db.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collation = "game")
+@Document(collection = "game_tb")
 public class Game {
 
     @Id

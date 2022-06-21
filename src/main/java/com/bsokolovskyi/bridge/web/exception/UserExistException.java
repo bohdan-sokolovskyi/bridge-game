@@ -1,11 +1,9 @@
 package com.bsokolovskyi.bridge.web.exception;
 
-import com.bsokolovskyi.bridge.web.dto.UserDTO;
-
 public class UserExistException extends RuntimeException {
 
-    public UserExistException(UserDTO userDTO) {
-        super(String.format("user %s already exist", userDTO.getLogin()));
+    public UserExistException(String email) {
+        super(String.format("user already exist by email %s", email));
     }
 
 }

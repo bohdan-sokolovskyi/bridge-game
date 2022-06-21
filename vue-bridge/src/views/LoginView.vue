@@ -1,36 +1,34 @@
 <template>
-  <div class="col-md-12">
-    <div class="card card-container">
-      <Form @submit="handleLogin" :validation-schema="schema">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <Field name="email" type="text" class="form-control" />
-          <ErrorMessage name="email" class="error-feedback" />
-        </div>
+  <div class="card card-container">
+    <Form @submit="handleLogin" :validation-schema="schema">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <Field name="email" type="text" class="form-control" />
+        <ErrorMessage name="email" class="error-feedback" />
+      </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <Field name="password" type="password" class="form-control" />
-          <ErrorMessage name="password" class="error-feedback" />
-        </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <Field name="password" type="password" class="form-control" />
+        <ErrorMessage name="password" class="error-feedback" />
+      </div>
 
-        <div class="form-group">
-          <button class="btn btn-primary btn-block" :disabled="loading">
-            <span
-                v-show="loading"
-                class="spinner-border spinner-border-sm"
-            ></span>
-            <span>Login</span>
-          </button>
-        </div>
+      <div class="form-group">
+        <button class="btn btn-primary btn-block" :disabled="loading">
+          <span
+              v-show="loading"
+              class="spinner-border spinner-border-sm"
+          ></span>
+          <span>Login</span>
+        </button>
+      </div>
 
-        <div class="form-group">
-          <div v-if="message" class="alert alert-danger" role="alert">
-            {{ message }}
-          </div>
+      <div class="form-group">
+        <div v-if="message" class="alert alert-danger" role="alert">
+          {{ message }}
         </div>
-      </Form>
-    </div>
+      </div>
+    </Form>
   </div>
 </template>
 
