@@ -18,7 +18,7 @@ public class AccessTokenController {
     }
 
     @PostMapping("/refresh")
-    public @ResponseBody RefreshAccessTokenResponse refreshToken(@RequestBody RefreshAccessTokenRequest refreshAccessTokenRequest) {
+    public RefreshAccessTokenResponse refreshToken(@RequestBody RefreshAccessTokenRequest refreshAccessTokenRequest) {
         RefreshAccessTokenResponse refreshAccessTokenResponse = new RefreshAccessTokenResponse();
         String newToken = "";
 

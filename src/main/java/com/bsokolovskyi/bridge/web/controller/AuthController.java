@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(path = "/auth/")
+@RequestMapping(path = "/auth")
 public class AuthController {
 
     public static final Logger log = LogManager.getLogger(AuthController.class);
@@ -25,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody AuthResponse login(@RequestBody AuthRequest authRequest) {
+    public AuthResponse login(@RequestBody AuthRequest authRequest) {
         AuthResponse response = new AuthResponse();
         String token = "";
 
@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping(path = "/signup", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody BaseResponse register(@RequestBody SignupRequest signupRequest) {
+    public BaseResponse register(@RequestBody SignupRequest signupRequest) {
         BaseResponse response = new BaseResponse();
 
         try {
