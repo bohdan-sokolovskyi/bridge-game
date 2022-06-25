@@ -1,4 +1,4 @@
-package com.bsokolovskyi.bridge.web.configuration;
+package com.bsokolovskyi.bridge.web.config;
 
 import com.bsokolovskyi.bridge.web.security.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;

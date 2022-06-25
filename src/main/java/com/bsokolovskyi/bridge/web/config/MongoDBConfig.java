@@ -1,4 +1,4 @@
-package com.bsokolovskyi.bridge.web.configuration;
+package com.bsokolovskyi.bridge.web.config;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+@EnableMongoRepositories(basePackages = { "com.bsokolovskyi.bridge.web.db.repository" })
 @Configuration
 public class MongoDBConfig {
 
