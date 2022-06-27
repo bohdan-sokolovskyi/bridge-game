@@ -1,5 +1,7 @@
 package com.bsokolovskyi.bridge.web.service;
 
+import com.bsokolovskyi.bridge.web.dto.UserDTO;
+import com.bsokolovskyi.bridge.web.exception.UserNotExistException;
 import com.bsokolovskyi.bridge.web.request.RefreshAccessTokenRequest;
 import com.bsokolovskyi.bridge.web.security.CustomUserDetails;
 import com.bsokolovskyi.bridge.web.db.entity.Role;
@@ -8,7 +10,6 @@ import com.bsokolovskyi.bridge.web.db.repository.RoleRepository;
 import com.bsokolovskyi.bridge.web.db.repository.UserRepository;
 import com.bsokolovskyi.bridge.web.exception.IncorrectPasswordException;
 import com.bsokolovskyi.bridge.web.exception.UserExistException;
-import com.bsokolovskyi.bridge.web.exception.UserNotExistException;
 import com.bsokolovskyi.bridge.web.security.jwt.JwtProvider;
 import com.bsokolovskyi.bridge.web.request.AuthRequest;
 import com.bsokolovskyi.bridge.web.request.SignupRequest;
@@ -20,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -73,7 +75,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public String loginUser(AuthRequest authRequest) throws UserNotExistException {
+    public String loginUser(AuthRequest authRequest) throws UserNotExistException, IncorrectPasswordException {
         User user = userRepository.findByEmail(authRequest.getEmail());
 
         if(user == null) {
@@ -95,6 +97,20 @@ public class UserService implements UserDetailsService {
          }
 
          return jwtProvider.generateToken(email);
+    }
+
+    public Map<String, UserDTO> getAllUsersInfo() {
+        return userRepository.findAll().stream().collect(Collectors.toMap(User::getEmail, UserDTO::new));
+    }
+
+    public UserDTO getUserInfo(String email) throws UserNotExistException {
+        User user = userRepository.findByEmail(email);
+
+        if(user == null) {
+            throw new UserNotExistException(email);
+        }
+
+        return new UserDTO(user);
     }
 
     @Override

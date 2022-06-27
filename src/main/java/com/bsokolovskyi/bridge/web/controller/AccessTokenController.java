@@ -1,14 +1,16 @@
 package com.bsokolovskyi.bridge.web.controller;
 
 import com.bsokolovskyi.bridge.web.request.RefreshAccessTokenRequest;
-import com.bsokolovskyi.bridge.web.response.RefreshAccessTokenResponse;
 import com.bsokolovskyi.bridge.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
-@RequestMapping(path = "/access_token")
+@RequestMapping( "/access_token")
 public class AccessTokenController {
 
     private final UserService userService;
@@ -18,19 +20,10 @@ public class AccessTokenController {
     }
 
     @PostMapping("/refresh")
-    public RefreshAccessTokenResponse refreshToken(@RequestBody RefreshAccessTokenRequest refreshAccessTokenRequest) {
-        RefreshAccessTokenResponse refreshAccessTokenResponse = new RefreshAccessTokenResponse();
-        String newToken = "";
-
-        try {
-            newToken = userService.refreshAccessToken(refreshAccessTokenRequest);
-        } catch (Exception e) {
-            refreshAccessTokenResponse.setStatus(HttpStatus.BAD_REQUEST);
-            refreshAccessTokenResponse.setText(e.getMessage());
-        }
-
-        refreshAccessTokenResponse.setAccessToken(newToken);
-
-        return refreshAccessTokenResponse;
+    public ResponseEntity<Map<String, String>> refreshToken(@RequestBody RefreshAccessTokenRequest refreshAccessTokenRequest) {
+        return ResponseEntity.ok(Collections.singletonMap(
+                "accessToken",
+                userService.refreshAccessToken(refreshAccessTokenRequest))
+        );
     }
 }

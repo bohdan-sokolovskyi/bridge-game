@@ -1,6 +1,6 @@
 package com.bsokolovskyi.bridge.web.db.repository;
 
-import com.bsokolovskyi.bridge.core.Game;
+import com.bsokolovskyi.bridge.web.db.entity.Game;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

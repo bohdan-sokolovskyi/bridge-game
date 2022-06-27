@@ -10,15 +10,17 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    public static final String BROKER_PATH = "/current_game";
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic");
+        registry.enableSimpleBroker(BROKER_PATH);
         registry.setApplicationDestinationPrefixes("/app");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/game_ws");
-        registry.addEndpoint("/game_ws").withSockJS();
+        registry.addEndpoint("/bridge");
+        registry.addEndpoint("/bridge").withSockJS();
     }
 }

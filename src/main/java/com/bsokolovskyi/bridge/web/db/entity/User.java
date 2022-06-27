@@ -12,6 +12,8 @@ import java.util.Set;
 
 @Document(collection = "user_tb")
 public class User {
+
+    //TODO: add sex, date of birth
     @Id
     private String id;
 
@@ -24,8 +26,6 @@ public class User {
 
     @DocumentReference(collection = "role_tb")
     private Role role;
-
-    public User() {}
 
     public void setId(String id) {
         this.id = id;

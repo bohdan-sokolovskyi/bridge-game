@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login", "/signup").permitAll()
-                .antMatchers("/users", "/games").hasRole("ADMIN")
+                .antMatchers("*/info/games", "*/info/users").hasRole("ADMIN")
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
