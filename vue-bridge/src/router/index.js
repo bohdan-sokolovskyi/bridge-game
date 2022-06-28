@@ -6,9 +6,9 @@ import LoginView from "@/views/LoginView";
 import SignupView from "@/views/SignupView";
 import ProfileView from "@/views/ProfileView";
 import DashboardView from "@/views/DashboardView";
+import NotFoundView from "@/views/NotFoundView";
 
 const routes = [
-    // FOR ALL USERS
   {
     path: '/',
     alias: '/home',
@@ -35,13 +35,16 @@ const routes = [
     name: 'profile-view',
     component: ProfileView
   },
-
-    // FOR ADMINS
   {
     path: '/dashboard',
     name: 'dashboard-view',
     component: DashboardView
   },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'not-found-view',
+    component: NotFoundView
+  }
 ];
 
 const router = createRouter({

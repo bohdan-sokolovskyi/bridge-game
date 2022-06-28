@@ -15,8 +15,22 @@
           </div>
           <div class="form-group">
             <label for="email">Email</label>
-            <Field name="email" type="text" class="form-control" />
+            <Field name="email" type="email" class="form-control" />
             <ErrorMessage name="email" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="sex">Sex</label>
+            <Field name="sex" class="form-control" as="select">
+              <option value="male">male</option>
+              <option value="female">female</option>
+              <option value="other">other</option>
+            </Field>
+            <ErrorMessage name="sex" class="error-feedback" />
+          </div>
+          <div class="form-group">
+            <label for="birth">Birth</label>
+            <Field name="birth" type="date" class="form-control" />
+            <ErrorMessage name="birth" class="error-feedback" />
           </div>
           <div class="form-group">
             <label for="password">Password</label>
@@ -48,11 +62,12 @@
 </template>
 
 <script>
-import { Form, Field, ErrorMessage } from "vee-validate";
-import * as yup from "yup";
+import { Form, Field, ErrorMessage } from 'vee-validate';
+import * as yup from 'yup';
+import moment from 'moment';
 
 export default {
-  name: "signup-view",
+  name: 'signup-view',
   components: {
     Form,
     Field,
@@ -80,7 +95,14 @@ export default {
           .string()
           .required('password is required!')
           .min(6, 'must be as least 6 characters!')
-          .max(40, 'must be maximum 40 characters!')
+          .max(40, 'must be maximum 40 characters!'),
+      sex: yup
+          .string()
+          .required('sex is required'),
+      birth: yup
+          .string()
+          .transform((val) => moment(val).format('DD.MM.YYYY'))
+          .required('date is required')
     });
 
     return {

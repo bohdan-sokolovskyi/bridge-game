@@ -14,12 +14,11 @@ public class Player {
 
     @Id
     private String id;
-
     @Indexed(unique = true)
     @DocumentReference(collection = "user_tb")
     private User user;
-
     private Set<Card> cards;
+    private int score;
 
     public String getId() {
         return id;
@@ -33,6 +32,10 @@ public class Player {
         return cards;
     }
 
+    public int getScore() {
+        return score;
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -43,5 +46,9 @@ public class Player {
 
     public void setCards(Set<Card> cards) {
         this.cards = cards;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }

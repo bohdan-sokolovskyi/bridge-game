@@ -34,6 +34,10 @@ class AuthService {
             password: user.password
         });
     }
+
+    isLogin() {
+        return localStorage.getItem('user') != null;
+    }
 }
 
 export default new AuthService(httpCommon);

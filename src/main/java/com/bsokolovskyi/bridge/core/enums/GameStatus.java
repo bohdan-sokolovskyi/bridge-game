@@ -1,4 +1,4 @@
-package com.bsokolovskyi.bridge.web.enums;
+package com.bsokolovskyi.bridge.core.enums;
 
 public enum GameStatus {
     NEW,

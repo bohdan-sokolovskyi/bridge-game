@@ -1,19 +1,28 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/dashboard">Dashboard</router-link>
-  </nav>
-
-  <nav>
-    <router-link to="/login" id="login-router-link">LOGIN</router-link>
-    <router-link to="/signup" id="signup-router-link">SIGNUP</router-link>
-  </nav>
+  <div class="nav-bar">
+    <nav aria-label="main">
+      <ul>
+        <li><router-link to="/" class="link">home</router-link></li>
+        <li><router-link to="/about" class="link">about</router-link></li>
+        <li><router-link to="/dashboard" class="link">dashboard</router-link></li>
+        <li><router-link v-if="!loggedIn" to="/login" class="link">login</router-link></li>
+        <li><router-link v-if="!loggedIn" to="/signup" class="link">signup</router-link></li>
+        <li><router-link v-if="loggedIn" to="/profile" class="link">profile</router-link></li>
+      </ul>
+    </nav>
+  </div>
   <router-view/>
 </template>
 
 <script>
-
+export default {
+  name: 'app-view',
+  computed: {
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    }
+  }
+}
 </script>
 
 <style>
@@ -26,24 +35,41 @@
 }
 
 nav {
-  padding: 30px;
-  position: center;
+  display: flex;
+  flex-direction: row;
+  padding: 12px 0;
+  transition: .5s ease all;
+  width: 90%;
+  margin: 0 auto;
 }
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
+ul, .link {
+  overflow-x:hidden;
+  white-space:nowrap;
+
+  font-weight: 500;
+  color: black;
+  list-style: none;
+  text-decoration: none;
 }
 
-nav a.router-link-exact-active {
+li {
+  display:inline;
+  text-transform: uppercase;
+  padding: 16px;
+  margin-left: 16px;
+}
+
+.link {
+  font-size: 14px;
+  transition: .5s ease all;
+  padding-bottom: 4px;
+  border-bottom: 1px solid transparent;
+}
+
+.link:hover {
   color: #42b983;
+  border-color: #42b983;
 }
 
-nav #login-router-link {
-  padding: 30px;
-}
-
-nav #signup-router-link {
-  padding:30px;
-}
 </style>

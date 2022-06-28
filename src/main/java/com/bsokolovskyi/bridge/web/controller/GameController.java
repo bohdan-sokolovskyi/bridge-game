@@ -41,9 +41,11 @@ public class GameController {
     }
 
     @RequestMapping("/play")
-    public void play(@RequestBody GameDataRequest request) {
+    public ResponseEntity<Object> play(@RequestBody GameDataRequest request) {
         simpMessagingTemplate.convertAndSend(
                 String.format("%s/progress/%s", WebSocketConfig.BROKER_PATH, request.getGameId()),
-                gameService.updateGameData(request));
+                gameService.updateGameState(request));
+
+        return ResponseEntity.ok().build();
     }
 }

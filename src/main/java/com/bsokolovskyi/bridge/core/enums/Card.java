@@ -2,6 +2,9 @@ package com.bsokolovskyi.bridge.core.enums;
 
 import com.bsokolovskyi.bridge.core.CardAction;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum Card {
 
     // hearts
@@ -59,8 +62,11 @@ public enum Card {
     public static final int CARD_P_J_DEFAULT_POINTS = 40;
     public static final int CARD_H_K_DEFAULT_POINTS = 50;
 
-    int points;
-    CardAction cardAction;
+    public static final int COUNT_OF_STARTED_CARDS = 5;
+    public static final int COUNT_OF_STARTED_CARDS_FOR_FIRST_PLAYER = 4;
+
+    final int points;
+    final CardAction cardAction;
 
     Card(int points, CardAction cardAction) {
         this.points = points;
@@ -77,5 +83,9 @@ public enum Card {
 
     public static boolean isJCard(Card card) {
         return card.equals(H_J) || card.equals(T_J) || card.equals(C_J) || card.equals(P_J);
+    }
+
+    public static List<Card> getNewDeck() {
+        return Arrays.asList(Card.values());
     }
 }

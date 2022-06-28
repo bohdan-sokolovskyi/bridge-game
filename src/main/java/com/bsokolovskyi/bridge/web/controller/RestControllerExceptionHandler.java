@@ -82,4 +82,15 @@ public class RestControllerExceptionHandler extends ResponseEntityExceptionHandl
                 request
         );
     }
+
+    @ExceptionHandler({IllegalStateException.class})
+    protected ResponseEntity<Object> internalHandle(RuntimeException e, WebRequest request) {
+        return handleExceptionInternal(
+                e,
+                Collections.singletonMap(TEXT_PARAM, "internal error"),
+                STD_HEADERS,
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                request
+        );
+    }
 }
