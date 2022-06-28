@@ -1,4 +1,6 @@
-package com.bsokolovskyi.bridge.core;
+package com.bsokolovskyi.bridge.core.enums;
+
+import com.bsokolovskyi.bridge.core.CardAction;
 
 public enum Card {
 

@@ -1,6 +1,6 @@
 package com.bsokolovskyi.bridge.web.db.entity;
 
-import com.bsokolovskyi.bridge.core.GameStatus;
+import com.bsokolovskyi.bridge.web.enums.GameStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;

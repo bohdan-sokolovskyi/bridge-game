@@ -44,6 +44,6 @@ public class GameController {
     public void play(@RequestBody GameDataRequest request) {
         simpMessagingTemplate.convertAndSend(
                 String.format("%s/progress/%s", WebSocketConfig.BROKER_PATH, request.getGameId()),
-                (Object) null);
+                gameService.updateGameData(request));
     }
 }

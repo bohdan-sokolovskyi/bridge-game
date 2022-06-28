@@ -1,5 +1,7 @@
 package com.bsokolovskyi.bridge.core;
 
+import com.bsokolovskyi.bridge.core.enums.Card;
+
 import java.util.*;
 
 final class GameController {

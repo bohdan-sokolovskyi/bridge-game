@@ -1,12 +1,12 @@
 package com.bsokolovskyi.bridge.web.service;
 
 import com.bsokolovskyi.bridge.web.dto.UserDTO;
+import com.bsokolovskyi.bridge.web.enums.Role;
+import com.bsokolovskyi.bridge.web.enums.Sex;
 import com.bsokolovskyi.bridge.web.exception.UserNotExistException;
 import com.bsokolovskyi.bridge.web.request.RefreshAccessTokenRequest;
 import com.bsokolovskyi.bridge.web.security.CustomUserDetails;
-import com.bsokolovskyi.bridge.web.db.entity.Role;
 import com.bsokolovskyi.bridge.web.db.entity.User;
-import com.bsokolovskyi.bridge.web.db.repository.RoleRepository;
 import com.bsokolovskyi.bridge.web.db.repository.UserRepository;
 import com.bsokolovskyi.bridge.web.exception.IncorrectPasswordException;
 import com.bsokolovskyi.bridge.web.exception.UserExistException;
@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,31 +28,27 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
     public UserService(@Autowired UserRepository userRepository,
-                       @Autowired RoleRepository roleRepository,
                        @Autowired PasswordEncoder passwordEncoder,
                        @Autowired JwtProvider jwtProvider) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
 
-        //pre init data (it is hard core, but for edu)
+        //pre init admin (it is hard core, but for edu)
         {
-            roleRepository.save(new Role("ROLE_USER"));
-            roleRepository.save(new Role("ROLE_ADMIN"));
-
             User admin = new User();
 
             admin.setFirstName("Big");
             admin.setLastName("Admin");
+            admin.setSex(Sex.OTHER);
+            admin.setBirth(new Date());
             admin.setEmail("admin@localhost");
             admin.setHashPassword(passwordEncoder.encode("i_am_very_big_admin"));
-            admin.setRole(Objects.requireNonNull(roleRepository.findByRole("ROLE_ADMIN")));
+            admin.setRole(Role.ROLE_ADMIN);
 
             userRepository.save(admin);
         }
@@ -68,7 +65,7 @@ public class UserService implements UserDetailsService {
         user.setLastName(signupRequest.getLastName());
         user.setHashPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
-        Role userRole = Objects.requireNonNull(roleRepository.findByRole("USER"));
+        Role userRole = Objects.requireNonNull(Role.ROLE_USER);
 
         user.setRole(userRole);
 

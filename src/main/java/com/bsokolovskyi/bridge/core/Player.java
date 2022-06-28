@@ -1,6 +1,7 @@
 package com.bsokolovskyi.bridge.core;
 
-import java.util.EnumSet;
+import com.bsokolovskyi.bridge.core.enums.Card;
+
 import java.util.List;
 
 public final class Player {

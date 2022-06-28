@@ -1,11 +1,12 @@
 package com.bsokolovskyi.bridge.web.service;
 
-import com.bsokolovskyi.bridge.core.GameStatus;
+import com.bsokolovskyi.bridge.web.enums.GameStatus;
 import com.bsokolovskyi.bridge.web.db.entity.Game;
 import com.bsokolovskyi.bridge.web.db.entity.User;
 import com.bsokolovskyi.bridge.web.db.repository.GameRepository;
 import com.bsokolovskyi.bridge.web.db.repository.UserRepository;
 import com.bsokolovskyi.bridge.web.dto.GameDTO;
+import com.bsokolovskyi.bridge.web.dto.GameProgressDTO;
 import com.bsokolovskyi.bridge.web.exception.GameAlreadyStartedException;
 import com.bsokolovskyi.bridge.web.exception.GameExistException;
 import com.bsokolovskyi.bridge.web.exception.GameNotExistException;
@@ -76,8 +77,9 @@ public class GameService {
         gameRepository.save(game);
     }
 
-    public void updateGameData(GameDataRequest request) {
+    public GameProgressDTO updateGameData(GameDataRequest request) {
         //TODO: implement me
+        return new GameProgressDTO();
     }
 
     public Map<String, GameDTO> getAllGames() {
