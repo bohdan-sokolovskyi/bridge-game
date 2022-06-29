@@ -12,7 +12,7 @@ public class SignupRequest {
     private String email;
     private Sex sex;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
-    private Date date;
+    private Date birth;
     private String password;
 
     public String getFirstName() {
@@ -31,8 +31,8 @@ public class SignupRequest {
         return sex;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getBirth() {
+        return birth;
     }
 
     public String getPassword() {
@@ -55,8 +55,8 @@ public class SignupRequest {
         this.sex = sex;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setBirth(Date birth) {
+        this.birth = birth;
     }
 
     public void setPassword(String password) {

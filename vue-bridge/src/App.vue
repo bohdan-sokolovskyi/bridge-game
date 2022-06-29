@@ -1,13 +1,17 @@
 <template>
   <div class="nav-bar">
     <nav aria-label="main">
-      <ul>
-        <li><router-link to="/" class="link">home</router-link></li>
-        <li><router-link to="/about" class="link">about</router-link></li>
-        <li><router-link to="/dashboard" class="link">dashboard</router-link></li>
-        <li><router-link v-if="!loggedIn" to="/login" class="link">login</router-link></li>
-        <li><router-link v-if="!loggedIn" to="/signup" class="link">signup</router-link></li>
-        <li><router-link v-if="loggedIn" to="/profile" class="link">profile</router-link></li>
+      <ul class="nav-ul">
+        <li class="nav-li"><router-link to="/" class="link">home</router-link></li>
+        <li class="nav-li"><router-link to="/about" class="link">about</router-link></li>
+        <li class="nav-li" v-if="loggedIn"><router-link to="/profile" class="link">profile</router-link></li>
+        <li class="nav-li" v-if="loggedIn"><router-link to="/new_game" class="link">new game</router-link></li>
+        <li class="nav-li" v-if="loggedIn"><router-link to="/game_connect" class="link">game connect</router-link></li>
+        <li class="nav-li" v-if="loggedIn"><router-link to="/users" class="link">users</router-link></li>
+        <li class="nav-li" v-if="loggedIn"><router-link to="/games" class="link">games</router-link></li>
+        <li class="nav-li" v-if="loggedIn"><router-link to="" @click="logout" class="link">logout</router-link></li>
+        <li class="nav-li" v-if="!loggedIn"><router-link to="/login" class="link">login</router-link></li>
+        <li class="nav-li" v-if="!loggedIn"><router-link to="/signup" class="link">signup</router-link></li>
       </ul>
     </nav>
   </div>
@@ -20,6 +24,16 @@ export default {
   computed: {
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
+    }
+  },
+
+  methods: {
+    logout() {
+      this.$store.dispatch('auth/logout').then(
+          () => {
+            this.$router.push('/home')
+          }
+      );
     }
   }
 }
@@ -43,7 +57,7 @@ nav {
   margin: 0 auto;
 }
 
-ul, .link {
+.nav-ul, .link {
   overflow-x:hidden;
   white-space:nowrap;
 
@@ -53,7 +67,7 @@ ul, .link {
   text-decoration: none;
 }
 
-li {
+.nav-li {
   display:inline;
   text-transform: uppercase;
   padding: 16px;

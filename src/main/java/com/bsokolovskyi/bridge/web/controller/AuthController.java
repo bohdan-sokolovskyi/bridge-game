@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -22,7 +21,7 @@ public class AuthController {
 
     @PostMapping( "/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequest authRequest) {
-        return ResponseEntity.ok(Collections.singletonMap("accessToken", userService.loginUser(authRequest)));
+        return ResponseEntity.ok(userService.loginUser(authRequest));
     }
 
     @PostMapping("/signup")

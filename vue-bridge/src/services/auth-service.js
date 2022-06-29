@@ -9,7 +9,7 @@ class AuthService {
     }
 
     login(user) {
-        return this.#httpCommon.post('login', {
+        return this.#httpCommon.post('auth/login', {
             email: user.email,
             password: user.password,
 
@@ -27,10 +27,12 @@ class AuthService {
     }
 
     register(user) {
-        return this.#httpCommon.post('signup', {
+        return this.#httpCommon.post('auth/signup', {
             firstName: user.firstName,
             lastName: user.lastName,
             email: user.email,
+            sex: user.sex,
+            birth: user.birth,
             password: user.password
         });
     }

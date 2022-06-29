@@ -1,25 +1,12 @@
 <template>
   <div class="container">
-    <header class="jumbotron">
-      <h3>
-        <strong>{{currentUser.username}}</strong> Profile
-      </h3>
-    </header>
-    <p>
-      <strong>Token:</strong>
-      {{currentUser.accessToken.substring(0, 20)}} ... {{currentUser.accessToken.substr(currentUser.accessToken.length - 20)}}
-    </p>
-    <p>
-      <strong>Id:</strong>
-      {{currentUser.id}}
-    </p>
-    <p>
-      <strong>Email:</strong>
-      {{currentUser.email}}
-    </p>
-    <strong>Authorities:</strong>
+    <h1>Profile</h1>
     <ul>
-      <li v-for="role in currentUser.roles" :key="role">{{role}}</li>
+      <li><strong>First name: </strong>{{currentUser.firstName}}</li>
+      <li><strong>Last name: </strong>{{currentUser.lastName}}</li>
+      <li><strong>Email: </strong>{{currentUser.email}}</li>
+      <li><strong>Sex: </strong>{{currentUser.sex}}</li>
+      <li><strong>Birth: </strong>{{currentUser.birth}}</li>
     </ul>
   </div>
 </template>
@@ -39,3 +26,20 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+li {
+  padding: 16px;
+  margin-left: 16px;
+  text-align: left;
+}
+
+strong {
+  display: block;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+</style>

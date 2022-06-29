@@ -20,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,9 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
+    private final static SimpleDateFormat DF = new SimpleDateFormat("dd.MM.yyyy");
+
+
     public UserService(@Autowired UserRepository userRepository,
                        @Autowired PasswordEncoder passwordEncoder,
                        @Autowired JwtProvider jwtProvider) {
@@ -39,7 +43,7 @@ public class UserService implements UserDetailsService {
         this.jwtProvider = jwtProvider;
 
         //pre init admin (it is hard core, but for edu)
-        {
+        if(userRepository.findByEmail("admin@localhost") == null) {
             User admin = new User();
 
             admin.setFirstName("Big");
@@ -72,7 +76,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public String loginUser(AuthRequest authRequest) throws UserNotExistException, IncorrectPasswordException {
+    public Map<String, String> loginUser(AuthRequest authRequest) throws UserNotExistException, IncorrectPasswordException {
         User user = userRepository.findByEmail(authRequest.getEmail());
 
         if(user == null) {
@@ -83,7 +87,16 @@ public class UserService implements UserDetailsService {
             throw new IncorrectPasswordException(authRequest.getEmail());
         }
 
-        return jwtProvider.generateToken(user.getEmail());
+        Map<String, String> response = new HashMap<>();
+
+        response.put("accessToken", jwtProvider.generateToken(user.getEmail()));
+        response.put("firstName", user.getFirstName());
+        response.put("lastName", user.getLastName());
+        response.put("email", user.getEmail());
+        response.put("sex", user.getSex().name());
+        response.put("birth", DF.format(user.getBirth()));
+
+        return response;
     }
 
     public String refreshAccessToken(RefreshAccessTokenRequest refreshAccessTokenRequest) throws UserNotExistException {

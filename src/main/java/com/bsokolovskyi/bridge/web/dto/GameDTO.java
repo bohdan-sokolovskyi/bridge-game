@@ -17,7 +17,7 @@ public class GameDTO {
     public GameDTO(Game game) {
         gameId = game.getGameId();
         gameName = game.getGameName();
-        players = game.getPlayers().stream().map(User::getEmail).collect(Collectors.toSet());
+        players = game.getPlayers().stream().map((e) -> e.getUser().getEmail()).collect(Collectors.toSet());
     }
 
     public String getGameId() {

@@ -5,8 +5,9 @@ import AboutView from "@/views/AboutView";
 import LoginView from "@/views/LoginView";
 import SignupView from "@/views/SignupView";
 import ProfileView from "@/views/ProfileView";
-import DashboardView from "@/views/DashboardView";
 import NotFoundView from "@/views/NotFoundView";
+import UsersView from "@/views/UsersView";
+import GamesView from "@/views/GamesView";
 
 const routes = [
   {
@@ -36,9 +37,14 @@ const routes = [
     component: ProfileView
   },
   {
-    path: '/dashboard',
-    name: 'dashboard-view',
-    component: DashboardView
+    path: '/users',
+    name: 'users-view',
+    component: UsersView
+  },
+  {
+    path: '/games',
+    name: 'games-view',
+    component: GamesView
   },
   {
     path: '/:pathMatch(.*)*',
