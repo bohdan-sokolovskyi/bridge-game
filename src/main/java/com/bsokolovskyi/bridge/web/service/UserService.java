@@ -14,6 +14,7 @@ import com.bsokolovskyi.bridge.web.security.jwt.JwtProvider;
 import com.bsokolovskyi.bridge.web.request.AuthRequest;
 import com.bsokolovskyi.bridge.web.request.SignupRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,16 +31,19 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
+    private final NotificationService notificationService;
 
     private final static SimpleDateFormat DF = new SimpleDateFormat("dd.MM.yyyy");
 
 
     public UserService(@Autowired UserRepository userRepository,
                        @Autowired PasswordEncoder passwordEncoder,
-                       @Autowired JwtProvider jwtProvider) {
+                       @Autowired JwtProvider jwtProvider,
+                       @Autowired NotificationService notificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtProvider = jwtProvider;
+        this.notificationService = notificationService;
 
         //pre init admin (it is hard core, but for edu)
         if(userRepository.findByEmail("admin@localhost") == null) {
@@ -50,7 +53,7 @@ public class UserService implements UserDetailsService {
             admin.setLastName("Admin");
             admin.setSex(Sex.OTHER);
             admin.setBirth(new Date());
-            admin.setEmail("admin@localhost");
+            admin.setEmail("sokol.chemist@gmail.com");
             admin.setHashPassword(passwordEncoder.encode("i_am_very_big_admin"));
             admin.setRole(Role.ROLE_ADMIN);
 
@@ -58,7 +61,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void createNewUser(SignupRequest signupRequest) throws UserExistException {
+    public void createNewUser(SignupRequest signupRequest) throws UserExistException, InterruptedException, MailException {
         if(userRepository.findByEmail(signupRequest.getEmail()) != null) {
             throw new UserExistException(signupRequest.getEmail());
         }
@@ -74,9 +77,15 @@ public class UserService implements UserDetailsService {
         user.setRole(userRole);
 
         userRepository.save(user);
+
+        notificationService.sendRegisterNotification(user);
     }
 
-    public Map<String, String> loginUser(AuthRequest authRequest) throws UserNotExistException, IncorrectPasswordException {
+    public Map<String, String> loginUser(AuthRequest authRequest) throws
+            UserNotExistException,
+            IncorrectPasswordException,
+            InterruptedException,
+            MailException {
         User user = userRepository.findByEmail(authRequest.getEmail());
 
         if(user == null) {
@@ -95,6 +104,8 @@ public class UserService implements UserDetailsService {
         response.put("email", user.getEmail());
         response.put("sex", user.getSex().name());
         response.put("birth", DF.format(user.getBirth()));
+
+        notificationService.sendLoginNotification(user);
 
         return response;
     }
