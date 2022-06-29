@@ -15,7 +15,7 @@ public class NotificationService {
     @Value("${spring.mail.username}")
     private String fromMail;
 
-    private JavaMailSender javaMailSender;
+    private final JavaMailSender javaMailSender;
 
     public NotificationService(@Autowired JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
