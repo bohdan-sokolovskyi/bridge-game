@@ -4,13 +4,13 @@
   <button v-else @click="finish">finish</button>
   <hr>
 
-  <h1 v-if="socket != null">{{thisCard()}}</h1>
+  <h1 v-if="socket != null">{{thisCard}}</h1>
 
   <select v-model="selected" v-if="socket != null">
-    <option v-for="card in computerCards" :key="card" value="{{card}}">{{card}}</option>
+    <option v-for="card in currentCards" :key="card" value="{{card}}">{{card}}</option>
   </select>
 
-  <button v-if="computerCards != null" @click="send">send</button>
+  <button v-if="thisCard != null" @click="send">send</button>
 
 </template>
 
@@ -71,7 +71,7 @@ export default {
     },
 
     send() {
-      this.stompClient.send("/topic/progress", {gameId: this.gameId, cards: [this.selected]});
+      this.stompClient.send("/topic/progress/", {gameId: this.gameId, cards: [this.selected]});
       this.stompClient.subscribe("/topic/progress/", function(response) { this.thisCard = JSON.parse(response.body).card });
     },
   },
