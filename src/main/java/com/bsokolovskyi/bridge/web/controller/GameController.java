@@ -1,12 +1,16 @@
 package com.bsokolovskyi.bridge.web.controller;
 
 import com.bsokolovskyi.bridge.web.config.WebSocketConfig;
+import com.bsokolovskyi.bridge.web.dto.GameProgressDTO;
 import com.bsokolovskyi.bridge.web.request.ConnectGameRequest;
 import com.bsokolovskyi.bridge.web.request.CreateGameRequest;
 import com.bsokolovskyi.bridge.web.request.GameDataRequest;
+import com.bsokolovskyi.bridge.web.response.CreateGameResponse;
 import com.bsokolovskyi.bridge.web.service.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,8 +34,8 @@ public class GameController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> create(@RequestBody CreateGameRequest request) {
-        return ResponseEntity.ok(Collections.singletonMap("gameId", gameService.createGame(request)));
+    public ResponseEntity<CreateGameResponse> create(@RequestBody CreateGameRequest request) {
+        return ResponseEntity.ok(gameService.createGame(request));
     }
 
     @PostMapping("/connect")
@@ -40,12 +44,9 @@ public class GameController {
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping("/play")
-    public ResponseEntity<Object> play(@RequestBody GameDataRequest request) {
-        simpMessagingTemplate.convertAndSend(
-                String.format("%s/progress/%s", WebSocketConfig.BROKER_PATH, request.getGameId()),
-                gameService.updateGameState(request));
-
-        return ResponseEntity.ok().build();
+    @MessageMapping("/play")
+    @SendTo("/topic/progress")
+    public GameProgressDTO play(GameDataRequest request) {
+        return gameService.updateGameState(request);
     }
 }

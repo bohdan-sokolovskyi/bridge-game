@@ -8,6 +8,9 @@ import ProfileView from "@/views/ProfileView";
 import NotFoundView from "@/views/NotFoundView";
 import UsersView from "@/views/UsersView";
 import GamesView from "@/views/GamesView";
+import NewGameView from "@/views/NewGameView";
+import GameConnectView from "@/views/GameConnectView";
+import PlayView from "@/views/PlayView";
 
 const routes = [
   {
@@ -42,9 +45,24 @@ const routes = [
     component: UsersView
   },
   {
+    path: '/new_game',
+    name: 'new-game-view',
+    component: NewGameView
+  },
+  {
+    path: '/game_connect',
+    name: 'game-connect-view',
+    component: GameConnectView
+  },
+  {
     path: '/games',
     name: 'games-view',
     component: GamesView
+  },
+  {
+    path: '/play',
+    name: 'play-view',
+    component: PlayView
   },
   {
     path: '/:pathMatch(.*)*',

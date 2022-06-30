@@ -1,7 +1,8 @@
 import axios from 'axios';
+import {webConfig} from "@/web-config";
 
 export default axios.create({
-    baseURL: 'http://localhost:8080/',
+    baseURL: webConfig.baseUrl,
     headers: {
         'Content-Type': 'application/json'
     }

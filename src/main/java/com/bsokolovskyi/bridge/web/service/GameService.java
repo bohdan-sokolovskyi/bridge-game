@@ -3,6 +3,7 @@ package com.bsokolovskyi.bridge.web.service;
 import com.bsokolovskyi.bridge.core.enums.Card;
 import com.bsokolovskyi.bridge.core.enums.GameStatus;
 import com.bsokolovskyi.bridge.web.db.entity.Game;
+import com.bsokolovskyi.bridge.web.db.entity.Player;
 import com.bsokolovskyi.bridge.web.db.entity.User;
 import com.bsokolovskyi.bridge.web.db.repository.GameRepository;
 import com.bsokolovskyi.bridge.web.db.repository.UserRepository;
@@ -15,6 +16,7 @@ import com.bsokolovskyi.bridge.web.exception.UserNotExistException;
 import com.bsokolovskyi.bridge.web.request.ConnectGameRequest;
 import com.bsokolovskyi.bridge.web.request.CreateGameRequest;
 import com.bsokolovskyi.bridge.web.request.GameDataRequest;
+import com.bsokolovskyi.bridge.web.response.CreateGameResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +38,7 @@ public class GameService {
         this.playerService = playerService;
     }
 
-    public String createGame(CreateGameRequest request) throws UserNotExistException, GameExistException {
+    public CreateGameResponse createGame(CreateGameRequest request) throws UserNotExistException, GameExistException {
         User user = userRepository.findByEmail(request.getEmail());
 
         if(user == null) {
@@ -50,7 +52,7 @@ public class GameService {
         Game game = new Game();
         game.setGameId(generateGameId());
         game.setGameName(request.getGameName());
-        game.setGameStatus(GameStatus.NEW);
+        game.setGameStatus(GameStatus.IN_PROGRESS); // NEW BEFORE
 
         // init deck
         List<Card> deck = Card.getNewDeck();
@@ -60,11 +62,18 @@ public class GameService {
         game.setUsedDeck(new ArrayDeque<>());
 
 
-        game.setFirstPlayer(playerService.createPlayer(user, getCardsForPlayer(Card.COUNT_OF_STARTED_CARDS_FOR_FIRST_PLAYER, game)));
+        Player player = playerService.createPlayer(user, getCardsForPlayer(Card.COUNT_OF_STARTED_CARDS_FOR_FIRST_PLAYER, game));
+
+        game.setFirstPlayer(player);
         game.getUsedDeck().add(getCardsForPlayer(1, game).iterator().next());
 
         gameRepository.save(game);
-        return game.getGameId();
+
+        CreateGameResponse response = new CreateGameResponse();
+        response.setGameId(game.getGameId());
+        response.setCards(new ArrayList<>(player.getCards()));
+
+        return response;
     }
 
     public void connectToGame(ConnectGameRequest request) throws UserNotExistException, GameNotExistException, GameAlreadyStartedException {
@@ -87,16 +96,22 @@ public class GameService {
         game.getPlayers().add(playerService.createPlayer(user, getCardsForPlayer(Card.COUNT_OF_STARTED_CARDS, game)));
         game.setGameStatus(GameStatus.IN_PROGRESS);
 
-        //TODO: run game process
-
         gameRepository.save(game);
     }
 
-    public GameProgressDTO updateGameState(GameDataRequest request) {
+    public GameProgressDTO updateGameState(GameDataRequest request) throws GameNotExistException {
+        GameProgressDTO response = new GameProgressDTO();
+        response.setGameId(request.getGameId());
 
-        //TODO: implement me
+        Game game = gameRepository.findByGameId(request.getGameId());
 
-        return new GameProgressDTO();
+        if(game == null) {
+            throw new GameNotExistException(request.getGameId());
+        }
+
+        response.setCard(getCardsForPlayer(1, game).iterator().next());
+
+        return response;
     }
 
     public Map<String, GameDTO> getAllGames() {

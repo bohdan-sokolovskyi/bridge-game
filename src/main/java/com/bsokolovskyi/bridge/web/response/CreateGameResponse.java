@@ -1,20 +1,19 @@
-package com.bsokolovskyi.bridge.web.request;
+package com.bsokolovskyi.bridge.web.response;
 
 import com.bsokolovskyi.bridge.core.enums.Card;
 
-import java.util.Set;
+import java.util.List;
 
-public class GameDataRequest {
+public class CreateGameResponse {
 
     private String gameId;
-
-    private Set<Card> cards;
+    private List<Card> cards;
 
     public String getGameId() {
         return gameId;
     }
 
-    public Set<Card> getCards() {
+    public List<Card> getCards() {
         return cards;
     }
 
@@ -22,7 +21,7 @@ public class GameDataRequest {
         this.gameId = gameId;
     }
 
-    public void setCards(Set<Card> cards) {
+    public void setCards(List<Card> cards) {
         this.cards = cards;
     }
 }
