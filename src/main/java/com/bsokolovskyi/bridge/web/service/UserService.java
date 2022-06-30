@@ -33,7 +33,7 @@ public class UserService implements UserDetailsService {
     private final JwtProvider jwtProvider;
     private final NotificationService notificationService;
 
-    private final static SimpleDateFormat DF = new SimpleDateFormat("dd.MM.yyyy");
+    private final SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
 
 
     public UserService(@Autowired UserRepository userRepository,
@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
         this.notificationService = notificationService;
 
         //pre init admin (it is hard core, but for edu)
-        if(userRepository.findByEmail("admin@localhost") == null) {
+        if(userRepository.findAll().isEmpty()) {
             User admin = new User();
 
             admin.setFirstName("Big");
@@ -103,7 +103,7 @@ public class UserService implements UserDetailsService {
         response.put("lastName", user.getLastName());
         response.put("email", user.getEmail());
         response.put("sex", user.getSex().name());
-        response.put("birth", DF.format(user.getBirth()));
+        response.put("birth", df.format(user.getBirth()));
 
         notificationService.sendLoginNotification(user);
 

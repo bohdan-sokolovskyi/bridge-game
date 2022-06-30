@@ -20,12 +20,12 @@ public class AuthController {
     }
 
     @PostMapping( "/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequest authRequest) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody AuthRequest authRequest) throws InterruptedException {
         return ResponseEntity.ok(userService.loginUser(authRequest));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Object> register(@RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Object> register(@RequestBody SignupRequest signupRequest) throws InterruptedException {
         userService.createNewUser(signupRequest);
         return ResponseEntity.ok().build();
     }
